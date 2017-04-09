@@ -1,4 +1,6 @@
 /Illumination.pro.user
+/IlluminationCore/IlluminationCore.pro.user
+/IlluminationGui/IlluminationGui.pro.user
 /Makefile
 /bin/IlluminationCore.exe
 /bin/IlluminationGui.exe
