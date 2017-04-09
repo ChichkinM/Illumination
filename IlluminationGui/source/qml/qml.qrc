@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Components/Button.qml</file>
+        <file>Pages/PageStart.qml</file>
+        <file>Pages/PageMods.qml</file>
+        <file>Components/CheckBox.qml</file>
+    </qresource>
+</RCC>

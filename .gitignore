@@ -1,0 +1,14 @@
+/Illumination.pro.user
+/Makefile
+/bin/IlluminationCore.exe
+/bin/IlluminationGui.exe
+/IlluminationGui/debug
+/IlluminationGui/release
+/IlluminationGui/Makefile
+/IlluminationGui/Makefile.Debug
+/IlluminationGui/Makefile.Release
+/IlluminationCore/debug
+/IlluminationCore/release
+/IlluminationCore/Makefile
+/IlluminationCore/Makefile.Debug
+/IlluminationCore/Makefile.Release
