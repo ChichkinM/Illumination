@@ -6,7 +6,22 @@ MainWindow::MainWindow(QObject *parent) : QObject(parent)
 {
     mainObj = new MainObj();
 
-    connect(mainObj, SIGNAL(networkStateChange(int)), this, SIGNAL(networkStateChange(int)));
+    connect(mainObj, SIGNAL(networkStateConnected()), this, SIGNAL(networkStateConnected()));
+    connect(mainObj, SIGNAL(networkStateConnecting()), this, SIGNAL(networkStateConnecting()));
+    connect(mainObj, SIGNAL(networkStateDisconnected()), this, SIGNAL(networkStateDisconnected()));
+
+    connect(mainObj, SIGNAL(ledStateConnected()), this, SIGNAL(ledStateConnected()));
+    connect(mainObj, SIGNAL(ledStateDisconnected()), this, SIGNAL(ledStateDisconnected()));
+}
+
+MainWindow::~MainWindow()
+{
+    delete mainObj;
+}
+
+void MainWindow::btnRefresh_clicked()
+{
+    mainObj->networkConnect();
 }
 
 void MainWindow::rbModeColor_clicked()

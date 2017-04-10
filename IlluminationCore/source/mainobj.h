@@ -58,6 +58,7 @@ signals:
 
     void networkOpen();
     void networkClose();
+    void networkWrite(QByteArray data);
 
     void bassInit();
     void bassStop();

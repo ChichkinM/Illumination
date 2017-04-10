@@ -22,6 +22,7 @@ signals:
 public slots:
     void open();
     void close();
+    void write(QByteArray cmd);
 
 private slots:
     void connectionHandler();

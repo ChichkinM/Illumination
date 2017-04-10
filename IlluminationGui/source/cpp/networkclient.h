@@ -23,10 +23,15 @@ public slots:
     void connect();
 
 signals:
-    void connectionStateChange(int state);
+    void stateConnected();
+    void stateDisconnected();
+    void stateConnecting();
+
+    void newData(QByteArray data);
 
 private slots:
     void reconnection();
+    void read();
 };
 
 #endif // NETWORKCLIENT_H

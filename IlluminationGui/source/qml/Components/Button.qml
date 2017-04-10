@@ -6,6 +6,12 @@ Rectangle {
     property bool checked: false
     property alias text : buttonText.text
 
+    QtObject {
+        id: internal
+
+        property bool preShow: true
+        property bool show: true
+    }
 
     Accessible.name: text
     Accessible.description: "This button does " + text
@@ -16,10 +22,38 @@ Rectangle {
 
     width: buttonText.width + 20
     height: 30
-    color: "lightgray"
+    color: "orange"
 
     radius: 5
     antialiasing: true
+
+    function setShow(state, duration)
+    {
+        if(state !== internal.show)
+        {
+            internal.preShow = state;
+            opacityAnimation.duration = duration;
+
+            if(state)
+                opacityAnimation.to = 1;
+            else
+                opacityAnimation.to = 0;
+
+            opacityAnimation.start();
+        }
+    }
+
+    PropertyAnimation {
+        id: opacityAnimation
+
+        target: button
+        property: "opacity"
+
+        onRunningChanged: {
+            if(!running)
+                internal.show = internal.preShow;
+        }
+    }
 
     Text {
         id: buttonText
@@ -32,6 +66,9 @@ Rectangle {
     MouseArea {
         id: mouseArea
         anchors.fill: parent
-        onClicked: parent.clicked();
+        onClicked: {
+            if (internal.show && !opacityAnimation.running)
+                button.clicked();
+        }
     }
 }

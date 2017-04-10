@@ -5,19 +5,39 @@ Rectangle {
 
     property alias text: checkBoxText.text
 
-    signal setColor(string color, real duration)
-    signal setColorFinished()
-
     color: "transparent"
     width: title.width
     height: 30
     radius: 10
 
-    onSetColor: {
+    QtObject {
+        id: internal
+
+        property bool preReady: false
+        property bool ready: false
+        property bool tryInit: false
+    }
+
+    signal setColorFinished();
+
+    function setState(state, duration) {
+        internal.preReady = state;
+
+        if (state)
+            setColor("green", duration);
+        else
+            setColor("red", duration);
+    }
+
+    function setColor(color, duration) {
         colorAnimation.to = color;
         colorAnimation.duration = duration;
         colorAnimation.start();
     }
+
+    function isReady() { return internal.ready; }
+    function isTryInit() {return internal.tryInit; }
+
 
     Text {
         id: checkBoxText
@@ -32,11 +52,14 @@ Rectangle {
 
         target: checkBoxText
         property: "color"
-        duration: 300
 
         onRunningChanged: {
             if(!running)
-                setColorFinished()
+            {
+                internal.tryInit = true;
+                internal.ready = internal.preReady;
+                setColorFinished();
+            }
         }
     }
 }

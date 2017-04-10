@@ -59,7 +59,7 @@ bool SerialPort::write(QByteArray arr)
     {
         serial->write(arr);
 
-        qDebug() << arr.toHex();
+//        qDebug() << arr.toHex();
 
         readResponce();
     }
@@ -70,6 +70,8 @@ bool SerialPort::readResponce()
     QByteArray responce;
     while(serial->waitForReadyRead(WAIT_FOR_READY_READ))
         responce.append(serial->readAll());
+
+    qDebug() << "resp" << responce.toHex();
 
     if(responce.size() > 0)
         emit newData(responce);

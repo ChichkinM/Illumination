@@ -37,8 +37,7 @@ Window {
 
     Connections {
         target: loader.item
-        onPageExit: {
-//            loader.source = "qrc:/Pages/PageMods.qml"
-        }
+
+        onPageExit: loader.source = "qrc:/Pages/PageMods.qml";
     }
 }

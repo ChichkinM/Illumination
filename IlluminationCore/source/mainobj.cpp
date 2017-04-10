@@ -2,7 +2,8 @@
 #include <QDebug>
 
 #define CMD_TO_LED 0xA0
-#define CMD_FROM_LED 0xA1
+#define CMD_TO_CORE 0xA1
+#define CMD_TO_GUI 0xA2
 
 #define CMD_MODE_COLOR 0xC0
 #define CMD_MODE_FLUCT 0xC1
@@ -53,6 +54,7 @@ MainObj::MainObj(QObject *parent) : QObject(parent)
     connect(server, SIGNAL(newData(QByteArray)), this, SLOT(sendCmd(QByteArray)));
     connect(this, SIGNAL(networkOpen()), server, SLOT(open()));
     connect(this, SIGNAL(networkClose()), server, SLOT(close()));
+    connect(this, SIGNAL(networkWrite(QByteArray)), server, SLOT(write(QByteArray)));
 
     connect(bass, SIGNAL(updateColor(QByteArray)), this, SLOT(sendCmd(QByteArray)));
     connect(this, SIGNAL(bassInit()), bass, SLOT(init()));
@@ -65,6 +67,7 @@ MainObj::MainObj(QObject *parent) : QObject(parent)
     //    bassThread->start();
     //    emit bassInit();
     //    emit bassStart();
+    //    timer->start();
 }
 
 void MainObj::openSerialPort(QString comName)
@@ -116,8 +119,6 @@ void MainObj::parseResponce(QByteArray cmd)
 //TODO при переключении с музыки на цвет может остаться цвет с музыки
 void MainObj::sendCmd(QByteArray cmd)
 {
-    qDebug() << "send cmd";
-
     if(cmd[0] == (char)CMD_TO_LED)
     {
         switch((int)cmd[1])
@@ -142,6 +143,17 @@ void MainObj::sendCmd(QByteArray cmd)
         cmd.prepend(CMD_TO_LED);
         cmd[1] = CMD_MODE_COLOR;
         cmd.append((char)0);
+    }
+
+    if(cmd[0] == (char)CMD_TO_CORE)
+    {
+        if(cmd[1] == (char)CMD_GET_STATUS)
+        {
+            cmd[0] = CMD_TO_GUI;
+            cmd.append((char)false); //TODO заменить на состояние LED. не забыть про многопоточный доступ
+        }
+
+        emit networkWrite(cmd);
     }
 
     emit serialWrite(cmd);
@@ -193,13 +205,13 @@ void MainObj::setAvailablePorts(QList<QString> ports)
 void MainObj::setSerialState(bool state)
 {
     serialIsOpen = state;
-     if(waiter->isRunning())
-         waiter->quit();
+    if(waiter->isRunning())
+        waiter->quit();
 }
 
 void MainObj::noResponse()
 {
     response = false;
-     if(waiter->isRunning())
-         waiter->quit();
+    if(waiter->isRunning())
+        waiter->quit();
 }

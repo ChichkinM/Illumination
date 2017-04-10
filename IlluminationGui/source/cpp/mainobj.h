@@ -3,9 +3,14 @@
 
 #include <QObject>
 #include <QColor>
+#include <QProcess>
 #include "networkclient.h"
 
 #define CMD_TO_LED 0xA0
+#define CMD_TO_CORE 0xA1
+#define CMD_TO_GUI 0xA2
+
+#define CMD_GET_STATUS 0xBC
 
 #define CMD_MODE_COLOR 0xC0
 #define CMD_MODE_FLUCT 0xC1
@@ -16,6 +21,7 @@ class MainObj : public QObject
     Q_OBJECT
 public:
     explicit MainObj(QObject *parent = 0);
+    ~MainObj();
 
     void writeCmd(int mode);
 
@@ -28,14 +34,22 @@ public:
 
 private:
     NetworkClient *client;
+    QProcess *core;
 
     QColor *color;
     int delayLED;
 
 signals:
-    void networkStateChange(int);
+    networkStateConnected();
+    networkStateConnecting();
+    networkStateDisconnected();
 
-public slots:
+    ledStateConnected();
+    ledStateDisconnected();
+
+private slots:
+    void getSerialState();
+    void parseData(QByteArray data);
 };
 
 #endif // MAINOBJ_H

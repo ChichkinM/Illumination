@@ -15,34 +15,55 @@ Item {
 
     signal pageExit()
 
-    Component.onCompleted: mainWindow.btnNetwork_clicked();
-
-    Connections {
-        target: mainWindow
-        onNetworkStateChange: {
-            switch(stateNet)
-            {
-            case 3:
-                cbDrvr.setColor("green", 300);
-                cbLed.setColor("green", 300);
-                break;
-
-            case 2:
-                cbDrvr.setColor("orange", 300);
-                break;
-
-            default:
-                cbDrvr.setColor("red", 300);
-            }
+    function checkComponentsState()
+    {
+        if(cbDrvr.isReady() && cbLed.isReady())
+        {
+            pageExitAnimation.to = 0;
+            pageExitAnimation.duration = 1000;
+            pageExitAnimation.start();
+        }
+        else if(cbDrvr.isTryInit() && cbLed.isTryInit())
+        {
+            btnSkip.setShow(true, 1000);
+            btnRefresh.setShow(true, 1000);
+            console.log("show skip");
         }
     }
 
+    Component.onCompleted: {
+        btnSkip.setShow(false, 0);
+        btnRefresh.setShow(false, 0);
+        mainWindow.btnNetwork_clicked();
+    }
+
     Connections {
-        target: cbLed
-        onSetColorFinished: pageStart.pageExit()
+        target: mainWindow
+
+        onNetworkStateConnecting: cbDrvr.setColor("orange", 300);
+        onNetworkStateConnected:  cbDrvr.setState(true, 300);
+        onNetworkStateDisconnected: cbDrvr.setState(false, 300);
+
+        onLedStateConnected: cbLed.setState(true, 300);
+        onLedStateDisconnected: cbLed.setState(false, 300);
+    }
+
+    PropertyAnimation {
+        id: pageExitAnimation
+
+        target: pageStart
+        property: "opacity"
+        to: 0
+        duration: 300
+
+        onRunningChanged: {
+            if(!running)
+                pageStart.pageExit();
+        }
     }
 
     GridLayout {
+        id: grid
         anchors.centerIn: parent
         columns: 1
         rows: 3
@@ -53,18 +74,46 @@ Item {
             font.pointSize: 20
         }
 
+        //TODO может есть способ сделать список объектов
         CheckBox {
             id: cbDrvr
-
             text: "Драйвер"
+
+            onSetColorFinished: pageStart.checkComponentsState();
         }
 
         CheckBox {
             id: cbLed
-
             text: "Светодиодная лента"
+
+            onSetColorFinished: pageStart.checkComponentsState();
+        }
+    }
+
+    RowLayout {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 30
+
+        Button {
+            id: btnRefresh
+
+            text: "Обновить";
+
+            onClicked: {
+                cbDrvr.setColor("orange", 300);
+                cbLed.setColor("orange", 300);
+
+                mainWindow.btnRefresh_clicked();
+            }
+        }
+
+        Button {
+            id: btnSkip
+
+            text: "Все равно начать >>";
+
+            onClicked: pageExitAnimation.start();
         }
     }
 }
-
-

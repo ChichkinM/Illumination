@@ -9,14 +9,18 @@ class MainWindow : public QObject
     Q_OBJECT
 public:
     explicit MainWindow(QObject *parent = 0);
-
-
+    ~MainWindow();
 
 private:
     MainObj *mainObj;
 
 signals:
-    void networkStateChange(int stateNet);
+    networkStateConnected();
+    networkStateConnecting();
+    networkStateDisconnected();
+
+    ledStateConnected();
+    ledStateDisconnected();
 
 public slots:
     void rbModeColor_clicked();
@@ -28,6 +32,7 @@ public slots:
 
     int getNetworkState() { return 1;}
 
+    void btnRefresh_clicked();
 private slots:
 
 };

@@ -68,6 +68,12 @@ void NetworkServer::disconnectionHandler()
         }
 }
 
+void NetworkServer::write(QByteArray cmd)
+{
+    for(int i = 0; i < clients->size(); i++)
+        clients->at(i)->write(cmd);
+}
+
 void NetworkServer::read()
 {
     QTcpSocket *client = (QTcpSocket*)sender();
