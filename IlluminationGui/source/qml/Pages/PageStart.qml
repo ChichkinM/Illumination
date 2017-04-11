@@ -62,11 +62,9 @@ Item {
         }
     }
 
-    GridLayout {
+    ColumnLayout {
         id: grid
         anchors.centerIn: parent
-        columns: 1
-        rows: 3
 
         Text {
             id: title

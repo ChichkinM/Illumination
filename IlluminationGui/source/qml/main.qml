@@ -32,6 +32,7 @@ Window {
         anchors.topMargin: 5
 
         source: "qrc:/Pages/PageStart.qml"
+//        source: "qrc:/Pages/PageMods.qml"
     }
 
 
